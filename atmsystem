@@ -1,0 +1,99 @@
+import { useState } from 'react';
+
+function App() {
+  const [balance, setBalance] = useState(1000); // Initial balance
+  const [amount, setAmount] = useState('');
+  const [message, setMessage] = useState('');
+
+  const handleDeposit = () => {
+    const amt = parseFloat(amount);
+    if (amt > 0) {
+      setBalance(balance + amt);
+      setMessage(`Deposited ₹${amt}`);
+    } else {
+      setMessage('Enter a valid amount');
+    }
+    setAmount('');
+  };
+
+  const handleWithdraw = () => {
+    const amt = parseFloat(amount);
+    if (amt > 0 && amt <= balance) {
+      setBalance(balance - amt);
+      setMessage(`Withdrawn ₹${amt}`);
+    } else if (amt > balance) {
+      setMessage('Insufficient balance');
+    } else {
+      setMessage('Enter a valid amount');
+    }
+    setAmount('');
+  };
+
+  return (
+    <div style={styles.container}>
+      <h2>ATM Simulator</h2>
+
+      <div style={styles.balance}>💰 Balance: ₹{balance}</div>
+
+      <input
+        type="number"
+        placeholder="Enter amount"
+        value={amount}
+        onChange={(e) => setAmount(e.target.value)}
+        style={styles.input}
+      />
+
+      <div style={styles.buttonGroup}>
+        <button onClick={handleDeposit} style={styles.button}>Deposit</button>
+        <button onClick={handleWithdraw} style={styles.button}>Withdraw</button>
+      </div>
+
+      {message && <div style={styles.message}>{message}</div>}
+    </div>
+  );
+}
+
+const styles = {
+  container: {
+    maxWidth: 400,
+    margin: '50px auto',
+    padding: 20,
+    border: '1px solid #ccc',
+    borderRadius: 10,
+    textAlign: 'center',
+    boxShadow: '0 0 10px rgba(0,0,0,0.1)',
+  },
+  balance: {
+    fontSize: 24,
+    margin: '20px 0',
+    color: '#333',
+  },
+  input: {
+    width: '100%',
+    padding: 10,
+    fontSize: 16,
+    marginBottom: 20,
+    borderRadius: 5,
+    border: '1px solid #ccc',
+  },
+  buttonGroup: {
+    display: 'flex',
+    justifyContent: 'space-around',
+    marginBottom: 20,
+  },
+  button: {
+    padding: '10px 20px',
+    fontSize: 16,
+    borderRadius: 5,
+    border: 'none',
+    backgroundColor: '#4CAF50',
+    color: '#fff',
+    cursor: 'pointer',
+  },
+  message: {
+    fontSize: 16,
+    color: '#555',
+  },
+};
+
+export default App;
