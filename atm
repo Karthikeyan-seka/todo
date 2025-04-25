@@ -1,0 +1,97 @@
+import { useState } from 'react';
+
+function App() {
+  const [name, setName] = useState('');
+  const [date, setDate] = useState('');
+  const [time, setTime] = useState('');
+  const [bookings, setBookings] = useState([]);
+
+  const handleBooking = () => {
+    if (name && date && time) {
+      setBookings([...bookings, { name, date, time }]);
+      setName('');
+      setDate('');
+      setTime('');
+    } else {
+      alert('Please fill all fields');
+    }
+  };
+
+  return (
+    <div style={styles.container}>
+      <h2>Simple Booking System</h2>
+
+      <input
+        type="text"
+        placeholder="Your Name"
+        value={name}
+        onChange={(e) => setName(e.target.value)}
+        style={styles.input}
+      />
+
+      <input
+        type="date"
+        value={date}
+        onChange={(e) => setDate(e.target.value)}
+        style={styles.input}
+      />
+
+      <input
+        type="time"
+        value={time}
+        onChange={(e) => setTime(e.target.value)}
+        style={styles.input}
+      />
+
+      <button onClick={handleBooking} style={styles.button}>
+        Book Appointment
+      </button>
+
+      <h3>Booked Appointments</h3>
+      <ul>
+        {bookings.map((b, idx) => (
+          <li key={idx} style={styles.bookingItem}>
+            {b.name} - {b.date} at {b.time}
+          </li>
+        ))}
+      </ul>
+    </div>
+  );
+}
+
+const styles = {
+  container: {
+    maxWidth: 400,
+    margin: '50px auto',
+    padding: 20,
+    border: '1px solid #ccc',
+    borderRadius: 10,
+    boxShadow: '0 0 10px rgba(0,0,0,0.1)',
+    textAlign: 'center',
+  },
+  input: {
+    width: '100%',
+    padding: 10,
+    marginBottom: 10,
+    fontSize: 16,
+    borderRadius: 5,
+    border: '1px solid #ccc',
+  },
+  button: {
+    width: '100%',
+    padding: 10,
+    fontSize: 16,
+    borderRadius: 5,
+    backgroundColor: '#4CAF50',
+    color: '#fff',
+    border: 'none',
+    cursor: 'pointer',
+    marginBottom: 20,
+  },
+  bookingItem: {
+    textAlign: 'left',
+    marginBottom: 5,
+  },
+};
+
+export default App;
