@@ -1,0 +1,367 @@
+// 🚀 1. Advanced BookMyShow Simulation (App.jsx)
+
+import React, { useState } from 'react';
+
+function BookMyShowApp() {
+  const movies = ['Leo', 'Jawan', 'Vikram'];
+  const seats = Array.from({ length: 20 }, (_, i) => i + 1);
+
+  const [selectedMovie, setSelectedMovie] = useState('');
+  const [selectedSeats, setSelectedSeats] = useState([]);
+  const [confirmed, setConfirmed] = useState(false);
+
+  const toggleSeat = (seat) => {
+    if (confirmed) return;
+    if (selectedSeats.includes(seat)) {
+      setSelectedSeats(selectedSeats.filter((s) => s !== seat));
+    } else {
+      if (selectedSeats.length >= 5) {
+        alert('You can select up to 5 seats only.');
+        return;
+      }
+      setSelectedSeats([...selectedSeats, seat]);
+    }
+  };
+
+  const handleConfirm = () => {
+    if (!selectedMovie) {
+      alert('Please select a movie before confirming.');
+      return;
+    }
+    if (selectedSeats.length === 0) {
+      alert('Please choose at least one seat.');
+      return;
+    }
+    setConfirmed(true);
+  };
+
+  return (
+    <div style={{ padding: 20 }}>
+      <h2>🎬 BookMyShow Simulation</h2>
+
+      <label htmlFor="movie">Select Movie:</label>
+      <select
+        id="movie"
+        value={selectedMovie}
+        onChange={(e) => setSelectedMovie(e.target.value)}
+      >
+        <option value="">-- Choose a Movie --</option>
+        {movies.map((m) => (
+          <option key={m} value={m}>{m}</option>
+        ))}
+      </select>
+
+      <h3>Choose Seats (Max 5)</h3>
+      <div style={{ display: 'flex', flexWrap: 'wrap', gap: 10 }}>
+        {seats.map((seat) => (
+          <button
+            key={seat}
+            onClick={() => toggleSeat(seat)}
+            disabled={confirmed}
+            style={{
+              width: 50,
+              height: 50,
+              backgroundColor: selectedSeats.includes(seat) ? '#FFA500' : '#008000',
+              color: '#FFF',
+              border: 'none',
+              borderRadius: 4,
+              cursor: confirmed ? 'not-allowed' : 'pointer'
+            }}
+          >
+            {seat}
+          </button>
+        ))}
+      </div>
+
+      <p>Selected Seats: {selectedSeats.join(', ')}</p>
+      <button onClick={handleConfirm} disabled={confirmed} style={{ marginTop: 10 }}>
+        {confirmed ? 'Booking Confirmed' : 'Confirm Booking'}
+      </button>
+
+      {confirmed && (
+        <div style={{ marginTop: 20 }}>
+          <h3>✅ Booking Details</h3>
+          <p>Movie: {selectedMovie}</p>
+          <p>Seats: {selectedSeats.join(', ')}</p>
+        </div>
+      )}
+    </div>
+  );
+}
+
+export default BookMyShowApp;
+
+
+// 🚍 2. Bus Reservation System (App.jsx)
+
+import React, { useState } from 'react';
+
+function BusReservationApp() {
+  const seatCount = 30;
+  const seats = Array.from({ length: seatCount }, (_, i) => i + 1);
+
+  const [reserved, setReserved] = useState(Array(seatCount).fill(false));
+
+  const toggleReserve = (index) => {
+    const updated = [...reserved];
+    updated[index] = !updated[index];
+    setReserved(updated);
+  };
+
+  return (
+    <div style={{ padding: 20 }}>
+      <h2>🚌 Bus Reservation System</h2>
+      <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
+        {seats.map((num, idx) => (
+          <button
+            key={num}
+            onClick={() => toggleReserve(idx)}
+            style={{
+              width: 40,
+              height: 40,
+              backgroundColor: reserved[idx] ? '#FF0000' : '#0000FF',
+              color: '#FFF',
+              border: 'none',
+              borderRadius: 4,
+              cursor: 'pointer'
+            }}
+          >
+            {num}
+          </button>
+        ))}
+      </div>
+      <p style={{ marginTop: 10 }}>
+        Reserved Seats: {reserved.reduce((acc, curr, i) => curr ? [...acc, i+1] : acc, []).join(', ') || 'None'}
+      </p>
+    </div>
+  );
+}
+
+export default BusReservationApp;
+
+
+// ❓ 3. Quiz App (App.jsx)
+
+import React, { useState } from 'react';
+
+function QuizApp() {
+  const questions = [
+    {
+      question: 'What is the capital of India?',
+      options: ['Mumbai', 'Delhi', 'Chennai', 'Kolkata'],
+      answer: 'Delhi'
+    },
+    {
+      question: 'Which language runs in a web browser?',
+      options: ['Java', 'C', 'Python', 'JavaScript'],
+      answer: 'JavaScript'
+    }
+  ];
+
+  const [current, setCurrent] = useState(0);
+  const [score, setScore] = useState(0);
+  const [showResult, setShowResult] = useState(false);
+
+  const handleOptionClick = (option) => {
+    if (option === questions[current].answer) {
+      setScore(score + 1);
+    }
+    const next = current + 1;
+    if (next < questions.length) {
+      setCurrent(next);
+    } else {
+      setShowResult(true);
+    }
+  };
+
+  return (
+    <div style={{ padding: 20 }}>
+      <h2>❓ Quiz App</h2>
+      {!showResult ? (
+        <div>
+          <p><strong>Q{current+1}:</strong> {questions[current].question}</p>
+          {questions[current].options.map((opt) => (
+            <button
+              key={opt}
+              onClick={() => handleOptionClick(opt)}
+              style={{ display: 'block', margin: '8px 0' }}
+            >
+              {opt}
+            </button>
+          ))}
+        </div>
+      ) : (
+        <div>
+          <h3>Result</h3>
+          <p>Your Score: {score} / {questions.length}</p>
+        </div>
+      )}
+    </div>
+  );
+}
+
+export default QuizApp;
+
+
+// 🗳️ 4. Voting System (App.jsx)
+
+import React, { useState } from 'react';
+
+function VotingApp() {
+  const candidates = ['Alice', 'Bob', 'Charlie'];
+  const [votes, setVotes] = useState({ Alice: 0, Bob: 0, Charlie: 0 });
+  const [voted, setVoted] = useState(false);
+
+  const castVote = (name) => {
+    if (voted) return;
+    setVotes({ ...votes, [name]: votes[name] + 1 });
+    setVoted(true);
+  };
+
+  return (
+    <div style={{ padding: 20 }}>
+      <h2>🗳️ Voting System</h2>
+      {candidates.map((name) => (
+        <button
+          key={name}
+          onClick={() => castVote(name)}
+          disabled={voted}
+          style={{ margin: '5px' }}
+        >
+          Vote for {name}
+        </button>
+      ))}
+      {voted && (
+        <div style={{ marginTop: 20 }}>
+          <h3>Results</n          h3>
+          {candidates.map((name) => (
+            <p key={name}>{name}: {votes[name]}</p>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+
+export default VotingApp;
+
+
+// 🏨 5. Hotel Room Booking (App.jsx)
+
+import React, { useState } from 'react';
+
+function HotelBookingApp() {
+  const roomTypes = ['Single', 'Double', 'Suite'];
+  const [selectedRoom, setSelectedRoom] = useState('');
+  const [checkIn, setCheckIn] = useState('');
+  const [checkOut, setCheckOut] = useState('');
+  const [confirmed, setConfirmed] = useState(false);
+
+  const handleConfirm = () => {
+    if (!selectedRoom || !checkIn || !checkOut) {
+      alert('Please complete all fields');
+      return;
+    }
+    if (new Date(checkOut) <= new Date(checkIn)) {
+      alert('Check-out must be after check-in');
+      return;
+    }
+    setConfirmed(true);
+  };
+
+  return (
+    <div style={{ padding: 20 }}>
+      <h2>🏨 Hotel Room Booking</h2>
+      <div>
+        <label>Room Type: </label>
+        <select value={selectedRoom} onChange={(e) => setSelectedRoom(e.target.value)}>
+          <option value="">-- Select Room --</option>
+          {roomTypes.map((type) => (
+            <option key={type} value={type}>{type}</option>
+          ))}
+        </select>
+      </div>
+      <div>
+        <label>Check-In: </label>
+        <input type="date" value={checkIn} onChange={(e) => setCheckIn(e.target.value)} />
+      </div>
+      <div>
+        <label>Check-Out: </label>
+        <input type="date" value={checkOut} onChange={(e) => setCheckOut(e.target.value)} />
+      </div>
+      <button onClick={handleConfirm} style={{ marginTop: 10 }}>
+        {confirmed ? 'Booking Confirmed' : 'Confirm Booking'}
+      </button>
+      {confirmed && (
+        <div style={{ marginTop: 20 }}>
+          <h3>✅ Booking Details</h3>
+          <p>Room: {selectedRoom}</p>
+          <p>From: {checkIn}</p>
+          <p>To: {checkOut}</p>
+        </div>
+      )}
+    </div>
+  );
+}
+
+export default HotelBookingApp;
+
+
+// ✅ 6. To-do App with Categories and Priority (App.jsx)
+
+import React, { useState } from 'react';
+
+function TodoApp() {
+  const categories = ['Work', 'Personal', 'Shopping'];
+  const priorities = ['Low', 'Medium', 'High'];
+  const [tasks, setTasks] = useState([]);
+  const [text, setText] = useState('');
+  const [category, setCategory] = useState(categories[0]);
+  const [priority, setPriority] = useState(priorities[1]);
+
+  const addTask = () => {
+    if (!text.trim()) return;
+    setTasks([...tasks, { text, category, priority }]);
+    setText('');
+  };
+
+  const removeTask = (index) => {
+    setTasks(tasks.filter((_, i) => i !== index));
+  };
+
+  return (
+    <div style={{ padding: 20 }}>
+      <h2>✅ To-do App with Categories & Priority</h2>
+      <div>
+        <input
+          placeholder="Task description"
+          value={text}
+          onChange={(e) => setText(e.target.value)}
+        />
+        <select value={category} onChange={(e) => setCategory(e.target.value)}>
+          {categories.map((c) => (
+            <option key={c} value={c}>{c}</option>
+          ))}
+        </select>
+        <select value={priority} onChange={(e) => setPriority(e.target.value)}>
+          {priorities.map((p) => (
+            <option key={p} value={p}>{p}</option>
+          ))}
+        </select>
+        <button onClick={addTask}>Add Task</button>
+      </div>
+      <ul style={{ marginTop: 10 }}>
+        {tasks.map((task, idx) => (
+          <li key={idx} style={{ marginBottom: 5 }}>
+            <span><strong>{task.text}</strong> [{task.category}, {task.priority}]</span>
+            <button onClick={() => removeTask(idx)} style={{ marginLeft: 10 }}>
+              Remove
+            </button>
+          </li>
+        ))}
+      </ul>
+    </div>
+  );
+}
+
+export default TodoApp;
