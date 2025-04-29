@@ -1,0 +1,55 @@
+import React, { useState } from "react";
+
+const App = () => {
+  const [passengerName, setPassengerName] = useState("");
+  const [reservedList, setReservedList] = useState([]);
+  const [waitingList, setWaitingList] = useState([]);
+  const MAX_RESERVATIONS = 5;
+
+  const handleReservation = () => {
+    if (passengerName.trim() === "") {
+      alert("Please enter a passenger name.");
+      return;
+    }
+
+    if (reservedList.length < MAX_RESERVATIONS) {
+      setReservedList([...reservedList, passengerName]);
+    } else {
+      setWaitingList([...waitingList, passengerName]);
+    }
+    setPassengerName("");
+  };
+
+  return (
+    <div style={{ padding: "20px", fontFamily: "Arial, sans-serif" }}>
+      <h1>IRCTC Ticket Reservation System</h1>
+      <div>
+        <input
+          type="text"
+          placeholder="Enter Passenger Name"
+          value={passengerName}
+          onChange={(e) => setPassengerName(e.target.value)}
+        />
+        <button onClick={handleReservation}>Reserve Ticket</button>
+      </div>
+      <div style={{ marginTop: "20px" }}>
+        <h2>Reserved List</h2>
+        <ul>
+          {reservedList.map((name, index) => (
+            <li key={index}>{name}</li>
+          ))}
+        </ul>
+      </div>
+      <div style={{ marginTop: "20px" }}>
+        <h2>Waiting List</h2>
+        <ul>
+          {waitingList.map((name, index) => (
+            <li key={index}>{name}</li>
+          ))}
+        </ul>
+      </div>
+    </div>
+  );
+};
+
+export default App;
