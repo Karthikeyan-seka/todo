@@ -1,116 +1,81 @@
 import React, { useState } from 'react';
 
 function App() {
-  const [userName, setUserName] = useState('');
-  const [movie, setMovie] = useState('');
-  const [showTime, setShowTime] = useState('');
-  const [tickets, setTickets] = useState(1);
-  const [confirmation, setConfirmation] = useState(null);
-  const [error, setError] = useState('');
+  const movies = ['Leo', 'Jawan', 'Vikram'];
+  const totalSeats = Array.from({ length: 20 }, (_, i) => i + 1);
 
-  const movies = ['Jawan', 'Leo', 'Avatar 2', 'Pathaan'];
-  const showTimes = ['10:00 AM', '1:00 PM', '4:00 PM', '7:00 PM', '10:00 PM'];
+  const [selectedMovie, setSelectedMovie] = useState('');
+  const [selectedSeats, setSelectedSeats] = useState([]);
+  const [confirmed, setConfirmed] = useState(false);
 
-  const handleBooking = () => {
-    if (!userName || !movie || !showTime) {
-      setError('Please fill all fields');
+  const toggleSeat = (seat) => {
+    if (confirmed) return;
+
+    if (selectedSeats.includes(seat)) {
+      setSelectedSeats(selectedSeats.filter((s) => s !== seat));
+    } else {
+      if (selectedSeats.length >= 5) {
+        alert('You can select up to 5 seats only.');
+        return;
+      }
+      setSelectedSeats([...selectedSeats, seat]);
+    }
+  };
+
+  const confirmBooking = () => {
+    if (!selectedMovie) {
+      alert('Please select a movie!');
       return;
     }
-
-    setConfirmation({
-      userName,
-      movie,
-      showTime,
-      tickets,
-    });
-
-    // Reset form
-    setUserName('');
-    setMovie('');
-    setShowTime('');
-    setTickets(1);
-    setError('');
+    if (selectedSeats.length === 0) {
+      alert('No seats selected!');
+      return;
+    }
+    setConfirmed(true);
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-red-100 via-pink-100 to-purple-200 p-6">
-      <div className="bg-white p-6 rounded-xl shadow-xl w-full max-w-md">
-        <h1 className="text-2xl font-bold mb-4 text-center">🎬 BookMyShow Simulator</h1>
+    <div>
+      <h2>🎬 BookMyShow Simulation</h2>
 
-        <div className="mb-3">
-          <label className="block mb-1 font-medium">Your Name</label>
-          <input
-            type="text"
-            className="w-full border p-2 rounded-md"
-            value={userName}
-            onChange={(e) => setUserName(e.target.value)}
-            placeholder="Enter your name"
-          />
-        </div>
+      <label>Select Movie:</label>
+      <select value={selectedMovie} onChange={(e) => setSelectedMovie(e.target.value)}>
+        <option value="">-- Choose --</option>
+        {movies.map((movie) => (
+          <option key={movie} value={movie}>{movie}</option>
+        ))}
+      </select>
 
-        <div className="mb-3">
-          <label className="block mb-1 font-medium">Select Movie</label>
-          <select
-            className="w-full border p-2 rounded-md"
-            value={movie}
-            onChange={(e) => setMovie(e.target.value)}
+      <h3>Choose Seats (Max 5)</h3>
+      <div style={{ display: 'flex', flexWrap: 'wrap', gap: '10px' }}>
+        {totalSeats.map((seat) => (
+          <button
+            key={seat}
+            onClick={() => toggleSeat(seat)}
+            disabled={confirmed}
+            style={{
+              width: '50px',
+              height: '50px',
+              backgroundColor: selectedSeats.includes(seat) ? 'orange' : 'green',
+              color: 'white',
+              borderRadius: '5px',
+            }}
           >
-            <option value="">--Choose a movie--</option>
-            {movies.map((m) => (
-              <option key={m} value={m}>
-                {m}
-              </option>
-            ))}
-          </select>
-        </div>
-
-        <div className="mb-3">
-          <label className="block mb-1 font-medium">Select Show Time</label>
-          <select
-            className="w-full border p-2 rounded-md"
-            value={showTime}
-            onChange={(e) => setShowTime(e.target.value)}
-          >
-            <option value="">--Choose a time--</option>
-            {showTimes.map((time) => (
-              <option key={time} value={time}>
-                {time}
-              </option>
-            ))}
-          </select>
-        </div>
-
-        <div className="mb-3">
-          <label className="block mb-1 font-medium">Number of Tickets</label>
-          <input
-            type="number"
-            className="w-full border p-2 rounded-md"
-            min={1}
-            max={10}
-            value={tickets}
-            onChange={(e) => setTickets(Number(e.target.value))}
-          />
-        </div>
-
-        {error && <p className="text-red-500 text-sm mb-3">{error}</p>}
-
-        <button
-          onClick={handleBooking}
-          className="w-full bg-red-600 text-white py-2 rounded-md hover:bg-red-700"
-        >
-          Book Tickets
-        </button>
-
-        {confirmation && (
-          <div className="mt-6 bg-green-100 text-green-800 p-4 rounded-md">
-            <p>✅ Booking Confirmed!</p>
-            <p><strong>Name:</strong> {confirmation.userName}</p>
-            <p><strong>Movie:</strong> {confirmation.movie}</p>
-            <p><strong>Show Time:</strong> {confirmation.showTime}</p>
-            <p><strong>Tickets:</strong> {confirmation.tickets}</p>
-          </div>
-        )}
+            {seat}
+          </button>
+        ))}
       </div>
+
+      <p>Selected: {selectedSeats.join(', ')}</p>
+      <button onClick={confirmBooking} disabled={confirmed}>Confirm Booking</button>
+
+      {confirmed && (
+        <div>
+          <h3>✅ Booking Confirmed!</h3>
+          <p>Movie: {selectedMovie}</p>
+          <p>Seats: {selectedSeats.join(', ')}</p>
+        </div>
+      )}
     </div>
   );
 }
