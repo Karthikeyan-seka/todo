@@ -1,99 +1,60 @@
-import { useState } from 'react';
+import React, { useState } from 'react';
 
 function App() {
-  const [balance, setBalance] = useState(1000); // Initial balance
+  const [balance, setBalance] = useState(5000);
   const [amount, setAmount] = useState('');
-  const [message, setMessage] = useState('');
+  const [type, setType] = useState('withdraw');
+  const [history, setHistory] = useState([]);
 
-  const handleDeposit = () => {
-    const amt = parseFloat(amount);
-    if (amt > 0) {
-      setBalance(balance + amt);
-      setMessage(`Deposited ₹${amt}`);
-    } else {
-      setMessage('Enter a valid amount');
+  const handleTransaction = () => {
+    const amt = parseInt(amount);
+    if (!amt || amt <= 0) {
+      alert('Enter valid amount');
+      return;
     }
-    setAmount('');
-  };
 
-  const handleWithdraw = () => {
-    const amt = parseFloat(amount);
-    if (amt > 0 && amt <= balance) {
+    if (type === 'withdraw') {
+      if (amt > balance) {
+        alert('Insufficient Balance');
+        return;
+      }
       setBalance(balance - amt);
-      setMessage(`Withdrawn ₹${amt}`);
-    } else if (amt > balance) {
-      setMessage('Insufficient balance');
+      setHistory([...history, `Withdraw ₹${amt}`]);
     } else {
-      setMessage('Enter a valid amount');
+      setBalance(balance + amt);
+      setHistory([...history, `Deposited ₹${amt}`]);
     }
+
     setAmount('');
   };
 
   return (
-    <div style={styles.container}>
-      <h2>ATM Simulator</h2>
+    <div>
+      <h2>🏧 ATM Machine</h2>
+      <p>Current Balance: ₹{balance}</p>
 
-      <div style={styles.balance}>💰 Balance: ₹{balance}</div>
+      <select value={type} onChange={(e) => setType(e.target.value)}>
+        <option value="withdraw">Withdraw</option>
+        <option value="deposit">Deposit</option>
+      </select>
 
       <input
         type="number"
-        placeholder="Enter amount"
+        placeholder="Enter Amount"
         value={amount}
         onChange={(e) => setAmount(e.target.value)}
-        style={styles.input}
       />
 
-      <div style={styles.buttonGroup}>
-        <button onClick={handleDeposit} style={styles.button}>Deposit</button>
-        <button onClick={handleWithdraw} style={styles.button}>Withdraw</button>
-      </div>
+      <button onClick={handleTransaction}>Submit</button>
 
-      {message && <div style={styles.message}>{message}</div>}
+      <h3>Transaction History</h3>
+      <ul>
+        {history.map((h, idx) => (
+          <li key={idx}>{h}</li>
+        ))}
+      </ul>
     </div>
   );
 }
-
-const styles = {
-  container: {
-    maxWidth: 400,
-    margin: '50px auto',
-    padding: 20,
-    border: '1px solid #ccc',
-    borderRadius: 10,
-    textAlign: 'center',
-    boxShadow: '0 0 10px rgba(0,0,0,0.1)',
-  },
-  balance: {
-    fontSize: 24,
-    margin: '20px 0',
-    color: '#333',
-  },
-  input: {
-    width: '100%',
-    padding: 10,
-    fontSize: 16,
-    marginBottom: 20,
-    borderRadius: 5,
-    border: '1px solid #ccc',
-  },
-  buttonGroup: {
-    display: 'flex',
-    justifyContent: 'space-around',
-    marginBottom: 20,
-  },
-  button: {
-    padding: '10px 20px',
-    fontSize: 16,
-    borderRadius: 5,
-    border: 'none',
-    backgroundColor: '#4CAF50',
-    color: '#fff',
-    cursor: 'pointer',
-  },
-  message: {
-    fontSize: 16,
-    color: '#555',
-  },
-};
 
 export default App;
