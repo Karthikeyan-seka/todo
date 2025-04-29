@@ -1,0 +1,82 @@
+import React, { useState } from "react";
+
+const App = () => {
+  const [tasks, setTasks] = useState([]);
+  const [task, setTask] = useState("");
+  const [filter, setFilter] = useState("all"); // 'all', 'completed', 'incomplete'
+
+  const addTask = () => {
+    if (task.trim()) {
+      setTasks([...tasks, { text: task, completed: false }]);
+      setTask("");
+    }
+  };
+
+  const toggleTaskCompletion = (index) => {
+    const updatedTasks = tasks.map((t, i) =>
+      i === index ? { ...t, completed: !t.completed } : t
+    );
+    setTasks(updatedTasks);
+  };
+
+  const deleteTask = (index) => {
+    const updatedTasks = tasks.filter((_, i) => i !== index);
+    setTasks(updatedTasks);
+  };
+
+  const filteredTasks = tasks.filter((t) => {
+    if (filter === "completed") return t.completed;
+    if (filter === "incomplete") return !t.completed;
+    return true; // 'all'
+  });
+
+  return (
+    <div style={{ padding: "20px" }}>
+      <h1>Todo App</h1>
+      <div>
+        <input
+          type="text"
+          value={task}
+          onChange={(e) => setTask(e.target.value)}
+          placeholder="Add a new task"
+        />
+        <button onClick={addTask}>Add</button>
+      </div>
+      <div style={{ margin: "10px 0" }}>
+        <button onClick={() => setFilter("all")}>All</button>
+        <button onClick={() => setFilter("completed")} style={{ marginLeft: "5px" }}>
+          Completed
+        </button>
+        <button onClick={() => setFilter("incomplete")} style={{ marginLeft: "5px" }}>
+          Incomplete
+        </button>
+      </div>
+      <h2>Tasks</h2>
+      <ul>
+        {filteredTasks.map((t, index) => (
+          <li key={index} style={{ marginBottom: "10px" }}>
+            <span
+              style={{
+                textDecoration: t.completed ? "line-through" : "none",
+                marginRight: "10px",
+              }}
+            >
+              {t.text}
+            </span>
+            <button onClick={() => toggleTaskCompletion(index)}>
+              {t.completed ? "Mark Incomplete" : "Mark Complete"}
+            </button>
+            <button onClick={() => deleteTask(index)} style={{ marginLeft: "5px" }}>
+              Delete
+            </button>
+          </li>
+        ))}
+      </ul>
+      <h2>Summary</h2>
+      <p>Completed: {tasks.filter((t) => t.completed).length}</p>
+      <p>Incomplete: {tasks.filter((t) => !t.completed).length}</p>
+    </div>
+  );
+};
+
+export default App;
